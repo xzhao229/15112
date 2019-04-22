@@ -5,7 +5,7 @@ import numpy as np
 from wide_resnet import WideResNet
 from keras.utils.data_utils import get_file
 
-pretrained_model = "pretrained_models/weights.28-3.73.hdf5"
+pretrained_model = "estimation_models/weights.28-3.73.hdf5"
 modhash = 'fbe63257a054c1c5466cfd7bf14646d6'
 
 
@@ -15,6 +15,7 @@ def draw_label(image, point, label, font=cv2.FONT_HERSHEY_SIMPLEX,
     x, y = point
     cv2.rectangle(image, (x, y - size[1]), (x + size[0], y), (255, 0, 0), cv2.FILLED)
     cv2.putText(image, label, point, font, font_scale, (255, 255, 255), thickness, lineType=cv2.LINE_AA)
+
 
 
 def yield_images_from_dir(image_dir):
@@ -34,9 +35,9 @@ def main():
     depth = 16
     k = 8
     margin = 0.4
-    image_dir = "current_test"
+    image_dir = "images/estimation_test/"
 
-    weight_file = get_file("weights.28-3.73.hdf5", pretrained_model, cache_subdir="pretrained_models",
+    weight_file = get_file("weights.28-3.73.hdf5", pretrained_model, cache_subdir="estimation_models",
                                file_hash=modhash, cache_dir=str(Path(__file__).resolve().parent))
 
     # for face detection
@@ -64,8 +65,9 @@ def main():
                 yw1 = max(int(y1 - margin * h), 0)
                 xw2 = min(int(x2 + margin * w), img_w - 1)
                 yw2 = min(int(y2 + margin * h), img_h - 1)
+                croppedImage = img[y1:y2, x1:x2]
+                cv2.imwrite("images/test/test_1_cropped.png", croppedImage)
                 cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                # cv2.rectangle(img, (xw1, yw1), (xw2, yw2), (255, 0, 0), 2)
                 faces[i, :, :, :] = cv2.resize(img[yw1:yw2 + 1, xw1:xw2 + 1, :], (img_size, img_size))
 
             # predict ages of the detected faces
@@ -78,7 +80,7 @@ def main():
                 label = "{}".format(int(predicted_ages[i]))
                 draw_label(img, (d.left(), d.top()), label)
 
-        return img
+        return img, predicted_ages[0]
 
 
 if __name__ == '__main__':

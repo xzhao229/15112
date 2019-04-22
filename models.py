@@ -174,14 +174,7 @@ class FaceAging(object):
     # conditional lsgan + batchnorm
     def train_age_lsgan_transfer(self, source_img_227, source_img_128, imgs, true_label_fea_128, true_label_fea_64,
                                  false_label_fea_64, fea_layer_name, age_label):
-        """
-        :param source_img_227: remove mean and size is 227
-        :param source_img_128: remove mean and size is 128
-        :param imgs: range in [-1, 1]
-        :param true_label_fea: the same size as imgs, has 5 channes
-        :param false_label_fea: the same size as imgs, has 5 channels
-        :return:
-        """
+
 
         self.face_age_alexnet(source_img_227, if_age=True)
         if fea_layer_name == 'conv3':
@@ -217,7 +210,7 @@ class FaceAging(object):
         self.g_loss = (1. / 2 * tf.reduce_mean(tf.square(D3_logits - 1.))) * self.gan_loss_weight
 
         g_source = (self.g_source + 1.) * 127.5
-        # self.tv_loss = total_variation_loss(g_source) * self.tv_loss_weight
+
 
         g_source = tf.image.resize_bilinear(images=g_source, size=[227, 227])
         g_source = g_source - self.mean
