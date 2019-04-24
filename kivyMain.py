@@ -40,7 +40,8 @@ class CameraScreen(Screen):
         camera = self.ids['camera']
         camera.export_to_png("images/estimation_test/test_1.png")
         im = cv2.imread("images/estimation_test/test_1.png", cv2.IMREAD_UNCHANGED)
-        y, x = im[:, :, 3].nonzero()  # get the nonzero alpha coordinates
+        print(im.shape)
+        y, x = im[:, :, -1].nonzero()  # get the nonzero alpha coordinates
         minx = np.min(x)
         miny = np.min(y)
         maxx = np.max(x)
