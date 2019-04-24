@@ -27,8 +27,6 @@ class AgeScreen(Screen):
         Clock.schedule_interval(self.update_pic, 1)
 
     def update_pic(self, dt):
-        # print(self.test_age)
-        # self.message = 'You look like {} years old.'.format(self.test_age)
         self.image.reload()
 
     def ageProgress(self):
@@ -50,13 +48,15 @@ class CameraScreen(Screen):
         cropImg = im[miny:maxy, minx:maxx]
         cv2.imwrite("images/estimation_test/test_1.png", cropImg)
         test_result, current_age  = predict.main()
-        self.test_age = int(current_age)
-        self.manager.get_screen('check_screen').test_age = int(current_age)
-        new_label = 'You look like ' + str(int(current_age)) + ' years old.'
-        new_label_progres = 'This is what your look at age of ' + str(int(current_age)+ 4)
-        self.manager.get_screen('progression_screen').message = new_label_progres
-        self.manager.get_screen('check_screen').message = new_label
-        cv2.imwrite('images/estimation_results/ageEst.jpg', test_result)
+        if current_age != -1:
+
+            self.test_age = int(current_age)
+            self.manager.get_screen('check_screen').test_age = int(current_age)
+            new_label = 'You look like ' + str(int(current_age)) + ' years old.'
+            new_label_progres = 'This is what your look at age of ' + str(int(current_age)+ 4)
+            self.manager.get_screen('progression_screen').message = new_label_progres
+            self.manager.get_screen('check_screen').message = new_label
+            cv2.imwrite('images/estimation_results/ageEst.jpg', test_result)
 
 
     def ageProgress(self):
