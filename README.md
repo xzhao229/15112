@@ -11,7 +11,7 @@ Age Prophet
 
 ## Trainning 
 * Trainning has been done for you
-* Please download pre-trained model at ..... unzip and put two model into same directory.
+* Please download pre-trained model at https://drive.google.com/open?id=1e-ViGd__dkAwvzf4RVv9uE-4_pq2KmrK unzip and put two models into same directory.
 
 ## Project Description
 * This is a course project for 15112. Age Prophet is an app that will take a picture of you and tell what you look like right now. You can also know what you look like in to next 4 years, 8 years, 12 years and 16 years. In addition, you can invite your friend to see how old they look and what they will look like in the future. 
