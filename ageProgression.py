@@ -10,6 +10,7 @@ import sys
 sys.path.append('./tools/')
 from utils import save_images, save_source
 from data_generator import ImageDataGenerator
+import cv2
 
 flags = tf.app.flags
 flags.DEFINE_float("learning_rate", 0.001, "Learning rate")
@@ -87,6 +88,7 @@ def my_train():
         if not os.path.exists(FLAGS.save_dir):
             os.makedirs(FLAGS.save_dir)
         generate_images_from_folder(model, sess, FLAGS.test_data_dir, FLAGS.train_data_dir)
+        resize_images()
 
 
 def generate_images_from_folder(model, sess, test_data_dir=None, train_data_dir=None):
@@ -114,14 +116,29 @@ def generate_images_from_folder(model, sess, test_data_dir=None, train_data_dir=
                     }
             samples = sess.run(model.ge_samples, feed_dict=dict)
             image = np.reshape(samples[0, :, :, :], (1, 128, 128, 3))
-            print(image)
-            print(type(image))
             # generator.save_batch(samples, paths, FLAGS.save_dir, index=j, if_target=True)
-            save_images(image, [1, 1], os.path.join(FLAGS.save_dir, paths[i] + '_' + str(j) + '.jpg'))
+            save_images(image,[1, 1], os.path.join(FLAGS.save_dir, paths[i] + '_' + str(j) + '.jpg'))
 
 
 
+def resize_images():
 
+    # get the position of x,y
+    with open("imageScale.txt") as f:
+        line = f.readlines()
+        x1 = int(line[0][:-1])
+        x2 = int(line[1][:-1])
+        y1 = int(line[2][:-1])
+        y2 = int(line[3])
+        xRescale = x2-x1
+        yRescale = y2-y1
+    #
+    for eachImage in os.listdir(FLAGS.save_dir):
+        oldImg = cv2.imread('images/estimation_test/test_1.png')
+        reImg = cv2.imread(FLAGS.save_dir + eachImage)
+        reImg = cv2.resize(reImg,(xRescale,yRescale))
+        oldImg[y1:y2,x1:x2] = reImg
+        cv2.imwrite(FLAGS.save_dir + eachImage, oldImg)
 
 
 

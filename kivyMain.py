@@ -31,7 +31,7 @@ class AgeScreen(Screen):
 
     def ageProgress(self):
         ageprogression.tmp()
-
+        return
 
 
 class CameraScreen(Screen):
@@ -40,15 +40,15 @@ class CameraScreen(Screen):
         camera = self.ids['camera']
         camera.export_to_png("images/estimation_test/test_1.png")
         im = cv2.imread("images/estimation_test/test_1.png", cv2.IMREAD_UNCHANGED)
-        print(im.shape)
-        y, x = im[:, :, -1].nonzero()  # get the nonzero alpha coordinates
+        y, x = im[:, :, 3].nonzero()  # get the nonzero alpha coordinates
         minx = np.min(x)
         miny = np.min(y)
         maxx = np.max(x)
         maxy = np.max(y)
         cropImg = im[miny:maxy, minx:maxx]
         cv2.imwrite("images/estimation_test/test_1.png", cropImg)
-        test_result, current_age  = predict.main()
+        test_result, current_age = predict.main()
+
         if current_age != -1:
 
             self.test_age = int(current_age)

@@ -67,6 +67,11 @@ def main():
                 yw2 = min(int(y2 + margin * h), img_h - 1)
                 croppedImage = img[y1:y2, x1:x2]
                 cv2.imwrite("images/test/test_1_cropped.png", croppedImage)
+                file = open('imageScale.txt','w')
+                file.write(str(x1) + '\n' + str(x2) + '\n' + str(y1) + '\n' + str(y2))
+                file.close()
+                img_original = img.copy()
+                cv2.imwrite('images/estimation_test/test_1.png', img_original)
                 cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
                 faces[i, :, :, :] = cv2.resize(img[yw1:yw2 + 1, xw1:xw2 + 1, :], (img_size, img_size))
 
@@ -81,6 +86,8 @@ def main():
                 draw_label(img, (d.left(), d.top()), label)
 
             return img, predicted_ages[0]
+        else:
+            return img, -1
 
 if __name__ == '__main__':
     main()
