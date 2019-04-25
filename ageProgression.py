@@ -114,6 +114,8 @@ def generate_images_from_folder(model, sess, test_data_dir=None, train_data_dir=
                     }
             samples = sess.run(model.ge_samples, feed_dict=dict)
             image = np.reshape(samples[0, :, :, :], (1, 128, 128, 3))
+            print(image)
+            print(type(image))
             # generator.save_batch(samples, paths, FLAGS.save_dir, index=j, if_target=True)
             save_images(image, [1, 1], os.path.join(FLAGS.save_dir, paths[i] + '_' + str(j) + '.jpg'))
 

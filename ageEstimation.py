@@ -80,8 +80,7 @@ def main():
                 label = "{}".format(int(predicted_ages[i]))
                 draw_label(img, (d.left(), d.top()), label)
 
-        return img, predicted_ages[0]
-
+            return img, predicted_ages[0]
 
 if __name__ == '__main__':
     main()

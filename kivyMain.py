@@ -31,7 +31,7 @@ class AgeScreen(Screen):
 
     def ageProgress(self):
         ageprogression.tmp()
-        return
+
 
 
 class CameraScreen(Screen):
