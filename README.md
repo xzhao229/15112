@@ -18,6 +18,7 @@ Age Prophet
 
 ## Files
 * kivyMain.py is the main file for the app, it would call other files such as ageEstimation.py, ageProgression.py. All the images are saved in the images folder including cropped image for age progression.
+* imageScale.txt is used to store the face position and used for replace face during age-progression
 
 ## Citations
 [Zhifei Zhang](http://web.eecs.utk.edu/~zzhang61/), [Yang Song](http://web.eecs.utk.edu/~ysong18/), and [Hairong Qi](https://www.eecs.utk.edu/people/faculty/hqi/). "Age Progression/Regression by Conditional Adversarial Autoencoder." *IEEE Conference on Computer Vision and Pattern Recognition (CVPR)*, 2017.
