@@ -13,7 +13,6 @@ import numpy as np
 import cv2
 
 
-
 # define variable age and globalized later
 age = 0
 
@@ -27,6 +26,7 @@ class HelperScreen(Screen):
 
 # Load Screen Class
 class LoadScreen(Screen):
+    numFaces = NumericProperty(0)
     # get the image path and save it at local folder for age progression use
     def load(self,path):
 
@@ -40,7 +40,8 @@ class LoadScreen(Screen):
         cropImg = im[miny:maxy, minx:maxx]
         # write the cropped image
         cv2.imwrite("images/estimation_test/test_1.png", cropImg)
-        test_result, current_age = predict.main()
+        test_result, current_age, self.numFaces = predict.main()
+
         # if face is found
         if current_age != -1:
             self.test_age = int(current_age)
@@ -56,7 +57,7 @@ class LoadScreen(Screen):
         else:
             # stay at camera_click_screen
             app = App.get_running_app()
-            app.root.ids['screen_manager'].current = "camera_click_screen"
+            app.root.ids['screen_manager'].current = "LoadScreen"
 
             # get the popup message to retest
             popup = Popup(title='No Face Detected, Please Try Again.',
@@ -65,8 +66,16 @@ class LoadScreen(Screen):
             popup.open()
     # age progression function
     def ageProgress(self):
-        ageprogression.tmp()
-        return
+        if self.numFaces > 1:
+            app = App.get_running_app()
+            app.root.ids['screen_manager'].current = "check_screen"
+            popup = Popup(title='More Than One Face Detected.',
+                      content=Label(text='Please Try One Face for Progression\n'
+                                         'Click Anywhere To Close', font_name='comici'),
+                      size_hint=(None, None), size=(280, 100))
+            popup.open()
+        else:
+            ageprogression.tmp()
 
 # age screen
 class AgeScreen(Screen):
@@ -93,7 +102,7 @@ class AgeScreen(Screen):
 class CameraScreen(Screen):
     # message for updated label age
     test_age = NumericProperty(0)
-
+    numFaces = NumericProperty(0)
     # camera capture function
     def capture(self):
         # get camera ready
@@ -108,7 +117,8 @@ class CameraScreen(Screen):
         # crop image boundary(some images may have boundary
         cropImg = im[miny:maxy, minx:maxx]
         cv2.imwrite("images/estimation_test/test_1.png", cropImg)
-        test_result, current_age = predict.main()
+        test_result, current_age, self.numFaces = predict.main()
+        print(self.numFaces)
 
         # if face is found
         if current_age != -1:
@@ -126,15 +136,24 @@ class CameraScreen(Screen):
             app = App.get_running_app()
             app.root.ids['screen_manager'].current = "camera_click_screen"
             # get the popup message to retest
-            popup = Popup(title='No Face Detected, Please Try Again.',
+            popup = Popup(title='No Faces Detected, Please Try Again.',
                           content=Label(text='Click Anywhere To Close',font_name = 'comici'),
                           size_hint=(None, None), size=(280, 100))
             popup.open()
 
     # age progression
     def ageProgress(self):
-        ageprogression.tmp()
-        return
+        if self.numFaces > 1:
+            app = App.get_running_app()
+            app.root.ids['screen_manager'].current = "check_screen"
+            popup = Popup(title='More Than One Face Detected.',
+                      content=Label(text='Please Try One Face for Progression\n'
+                                         'Click Anywhere To Close', font_name='comici'),
+                      size_hint=(None, None), size=(280, 100))
+            popup.open()
+        else:
+            ageprogression.tmp()
+
 
 # Age progression screen, enable check next age period, previous age period
 class ProgressionScreen(Screen):
@@ -143,7 +162,7 @@ class ProgressionScreen(Screen):
     message = StringProperty()
     age = NumericProperty(0)
 
-    # define how many times next age period or previous age period clicked and get image
+    # define times next age period or previous age period clicked and get image
     def __init__(self, **kwargs):
         super(ProgressionScreen, self).__init__(**kwargs)
         self.image = Image(source='images/progression_results/test_1_cropped.png_1.jpg')
@@ -158,7 +177,7 @@ class ProgressionScreen(Screen):
     # read the images and generate text label and estimated age for next time interval
     def nextAge(self):
         self.age = self.manager.get_screen('check_screen').test_age
-        if self.clickedTimes <=4:
+        if self.clickedTimes <= 4:
             self.image.source = 'images/progression_results/test_1_cropped.png_'+str(self.clickedTimes)+'.jpg'
             self.currentAge = int(self.age) + 4 * self.clickedTimes
             self.message = 'This is what your look at age of ' + str(self.currentAge) + '!'
@@ -172,7 +191,7 @@ class ProgressionScreen(Screen):
     def previousAge(self):
         self.age = self.manager.get_screen('check_screen').test_age
         if self.clickedTimes >= 1:
-            self.currentAge = self.currentAge-4
+            self.currentAge = self.currentAge - 4
             self.message = 'This is what your look at age of ' + str(self.currentAge) + '!'
             self.image.source = 'images/progression_results/test_1_cropped.png_' + str(self.clickedTimes) + '.jpg'
         else:
@@ -182,6 +201,7 @@ class ProgressionScreen(Screen):
 
 # this is used for the screen, button, labels, images layout design
 GUI = Builder.load_string('''
+
 # screen manager, check screen name 
 GridLayout:
     cols: 1
@@ -205,14 +225,15 @@ GridLayout:
             id: progression_screen
         
         
-        
+     
 <CameraScreen>
+    # background picture
     canvas.before:
         BorderImage:
             source: 'images/bgp.jpg'
             pos: self.pos
             size: self.size
-
+    #text label
     Label:
         text: "Age Prophet Tells Your Age From Your Look!"
         font_name: 'frfm721k'
@@ -221,7 +242,7 @@ GridLayout:
         pos:0,370
         halign:'center'
 
-
+    # two buttons
     Button:
         id:captureAndTest
         text: 'Test Your Age'
@@ -253,18 +274,20 @@ GridLayout:
             app.root.ids['screen_manager'].current = 'HelperScreen'
         background_normal: 'images/buttonbgp.JPG'
         background_down: 'images/buttonbgp.JPG'
-
+    
+    # camera, which will be activated automatically
     Camera:
         id: camera
         resolution: 800,680
         
 <AgeScreen>:
-    
+    # background image
     canvas.before:
         BorderImage:
             source: 'images/bgp.jpg'
             pos: self.pos
             size: self.size
+    # text labels
     Label:
         id:'ageScreenMessage'
         text: root.message
@@ -273,7 +296,8 @@ GridLayout:
         color: 0,0,0,1
         pos:0,370
         halign:'center'
-        
+    
+    # two buttons    
     Button:
         text: "Retake Photo"
         font_size: 24
@@ -284,6 +308,7 @@ GridLayout:
         background_down: 'images/buttonbgp.JPG'
         font_name: 'comici'
         color: 0,0,0,0.8
+        
         on_press:  
             app.root.ids['screen_manager'].transition.direction = 'right'
             app.root.ids['screen_manager'].current = 'camera_click_screen'
@@ -300,12 +325,14 @@ GridLayout:
         background_down: 'images/buttonbgp.JPG'
         font_name: 'comici'
         color: 0,0,0,0.8
+        
         on_press: 
             root.ageProgress()
             app.root.ids['screen_manager'].transition.direction = 'left'
             app.root.ids['screen_manager'].current = 'progression_screen'
-    
-    
+
+   
+# the following two screen follows the same structure as previous 
 <ProgressionScreen>:
     canvas.before:
         BorderImage:
@@ -332,6 +359,7 @@ GridLayout:
         background_down: 'images/buttonbgp.JPG'
         color: 0,0,0,0.8
         font_name: 'comici'
+        
         on_press:  
             app.root.ids['screen_manager'].transition.direction = 'right'
             app.root.ids['screen_manager'].current = 'camera_click_screen'
@@ -348,6 +376,7 @@ GridLayout:
         background_down: 'images/buttonbgp.JPG'
         color: 0,0,0,0.8
         font_name: 'comici'
+        
         on_press: 
             root.clickedTimes += 1
             root.nextAge()
@@ -364,6 +393,7 @@ GridLayout:
         background_down: 'images/buttonbgp.JPG'
         color: 0,0,0,0.8
         font_name: 'comici'
+        
         on_press:
             root.clickedTimes-=1
             root.previousAge()
@@ -410,6 +440,7 @@ Then, rogression function estimate and shows your look in next 4 years, \\n\
         background_down: 'images/buttonbgp.JPG'
         color: 0,0,0,0.8
         font_name: 'comici'
+        
         on_press:  
             app.root.ids['screen_manager'].transition.direction = 'right'
             app.root.ids['screen_manager'].current = 'LoadScreen'
@@ -425,6 +456,7 @@ Then, rogression function estimate and shows your look in next 4 years, \\n\
         background_down: 'images/buttonbgp.JPG'
         color: 0,0,0,0.8
         font_name: 'comici'
+        
         on_press:  
             app.root.ids['screen_manager'].transition.direction = 'right'
             app.root.ids['screen_manager'].current = 'camera_click_screen'
@@ -432,10 +464,11 @@ Then, rogression function estimate and shows your look in next 4 years, \\n\
             
             
 <LoadScreen>:   
-    
+    # file chooser list 
     FileChooserListView
         id:fileChooser
         path:'~/'
+    
     Button:
         id:select
         text: 'Select'
@@ -446,20 +479,19 @@ Then, rogression function estimate and shows your look in next 4 years, \\n\
         pos:root.width - 200, 0
         font_name: 'comici'
         color: 0,0,0,0.8
+        
         on_press:
-            root.load(fileChooser.selection) 
-            
+            root.load(fileChooser.selection)  
         background_normal: 'images/buttonbgp.JPG'
         background_down: 'images/buttonbgp.JPG'
-    Button: 
     
+    Button: 
         id: helper
         text: 'Back'
         bold: 'True'
         font_size: 24
         size: 200,70
         size_hint: None,None
-        
         font_name: 'comici'
         color: 0,0,0,0.8
         opacity: 1 if self.state == 'normal' else .5
@@ -470,7 +502,6 @@ Then, rogression function estimate and shows your look in next 4 years, \\n\
         background_normal: 'images/buttonbgp.JPG'
         background_down: 'images/buttonbgp.JPG'       
             
-
 ''')
 
 # main class
