@@ -11,7 +11,7 @@ Age Prophet
 * dlib 19.4
 * numpy 1.15.4
 * pillow 5.2.0
-* argparse
+
 
 ## Trainning 
 * Trainning has been done for you
