@@ -27,6 +27,8 @@ Age Prophet
 * kivyMain.py is the main file for the app, it would call other files such as ageEstimation.py, ageProgression.py. All the images are saved in the images folder including cropped image for age progression.
 * imageScale.txt is used to store the face position and used for replace face during age-progression
 * all .ttf files are used for font
+* wide_resnet.py is used for age prediction
+* folder tools and models.py are used for age progression
 
 
 ## Citations
@@ -46,3 +48,4 @@ Age Prophet
 
 [8]: Inspired by: (https://stackoverflow.com/questions/22932088/getting-value-of-a-numeric-property-in-kivy)
 
+[9]: Inspired by: (https://stackoverflow.com/questions/26656164/how-to-change-text-of-a-label-in-the-kivy-language-with-python)
