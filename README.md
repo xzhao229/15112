@@ -42,5 +42,7 @@ Age Prophet
 
 [6]: Kivy API: (https://kivy.org/doc/stable/api-index.html)
 
-[7]: ops.py Code modification of (http://stackoverflow.com/a/33950177)
+[7]: Inspired by: (https://stackoverflow.com/questions/46144734/a-complete-code-example-of-kivy-a-working-screen-manager-reference-written-in-kv)
+
+[8]: Inspired by: (https://stackoverflow.com/questions/22932088/getting-value-of-a-numeric-property-in-kivy)
 
