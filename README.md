@@ -50,4 +50,10 @@ Age Prophet
 
 [8]: Inspired by: (https://stackoverflow.com/questions/22932088/getting-value-of-a-numeric-property-in-kivy)
 
-[9]: Inspired by: (https://stackoverflow.com/questions/26656164/how-to-change-text-of-a-label-in-the-kivy-language-with-python)
+[9]: Inspired by: (https://stackoverflow.com/questions/26656164/how-to-change-text-of-a-label-in-the-kivy-language-with-python
+
+[10]: Background Image from: (http://favim.com/image/4082393/)
+
+[11]:Button Background Image from: (https://www.picpng.com/image/white-glossy-button-rectangular-png-107982)
+
+[12]:Instruction Screen Image From: (https://www.pinterest.at/pin/682013937296390017/)
